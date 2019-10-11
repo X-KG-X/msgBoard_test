@@ -1,0 +1,46 @@
+@model MsgCmt
+
+<p class="h4">CodingDojo Wall<span class="float-right">Welcome @ViewBag.user.FirstName<a href="logout" class="h6 ml-5">Logout</a></span></p>
+<p>Post a message</p>
+<form action="/newMessage" method="post">
+
+    <div>
+        <textarea asp-for="NewMsg.msgContent"  rows="3" class="form-control"></textarea>
+    </div>
+    <span asp-validation-for="NewMsg.msgContent" class="text-danger"> </span>
+    <input type="submit" value="Message" class="btn btn-primary float-right mt-2">
+</form>
+
+
+<div class="mt-5">
+@foreach(Message one in ViewBag.AllMessage)
+{
+    <p class="mt-5">@one.msgCreator.FirstName @one.msgCreator.LastName - @one.CreatedAt.ToString("MMM d, yyy") </p>
+    <p >@one.msgContent</p>
+        @if(@one.UserId==@ViewBag.user.UserId && ((ViewBag.currentTime-one.CreatedAt).TotalMinutes)<30)
+        
+        {
+            <a href="/delete/@one.MessageId" class="btn btn-danger">Delete</a>
+        }
+        
+
+
+    <div class="ml-5">
+        @foreach(Comment two in one.msgComments)
+        {
+            <p >@two.cmtCreator.FirstName @two.cmtCreator.LastName - @two.CreatedAt.ToString("MMM d, yyy") </p>
+            <p class="ml-3">@two.cmtContent</p>
+        }
+        <p>Post a Comment</p>
+        <form action="/newComment/@one.MessageId" method="post" >
+
+            <div>
+                <textarea asp-for="NewCmt.cmtContent"  rows="2" class="form-control"></textarea>
+            </div>
+            <span asp-validation-for="NewCmt.cmtContent" class="text-danger"> </span>
+            <input type="submit" value="Comment" class="btn btn-success float-right mt-2">
+        </form>
+
+    </div>
+}
+</div>
